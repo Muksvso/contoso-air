@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import ExpressBooking from "@/components/ExpressBooking";
 import FlightOption from "@/components/FlightOption";
 import { Flight, Airport } from "@/types/flight";
 
@@ -10,6 +11,7 @@ interface FlightsProps {
   fromAirport: Airport;
   toAirport: Airport;
   formatDuration: (minutes: number) => string;
+  showExpressBooking?: boolean;
   onComplete?: (selection: { outbound: Flight; inbound?: Flight }) => void;
 }
 
@@ -20,6 +22,7 @@ const Flights = ({
   fromAirport,
   toAirport,
   formatDuration,
+  showExpressBooking = false,
   onComplete,
 }: FlightsProps) => {
   const [selectedOutbound, setSelectedOutbound] = useState<Flight | null>(null);
@@ -45,6 +48,14 @@ const Flights = ({
         </p>
       </div>
       <div className="mx-auto w-full max-w-6xl rounded-3xl bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 ring-1 ring-gray-200 shadow-sm px-5 sm:px-6 py-4 md:py-5 space-y-10">
+        {showExpressBooking && (
+          <ExpressBooking
+            outbound={outbound}
+            inbound={inbound}
+            onSelectOutbound={setSelectedOutbound}
+            onSelectInbound={setSelectedInbound}
+          />
+        )}
         <div>
           <h2 className="text-lg font-semibold mb-3">
             Select departing flight

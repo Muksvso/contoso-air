@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useBooking } from "@/components/BookingProvider";
 import Flights from "@/components/Flights";
@@ -13,6 +13,7 @@ import {
 const FlightPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [showExpressBooking, setShowExpressBooking] = useState(false);
 
   const {
     selectFlights,
@@ -26,6 +27,28 @@ const FlightPage = () => {
   const dpa = searchParams.get("dpa"); // outbound depart
   const dpb = searchParams.get("dpb"); // return depart (if round trip)
   const passengers = Number(passengersParam) || 1;
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadExpressBookingFlag() {
+      const response = await fetch("/api/features/express-booking", {
+        cache: "no-store",
+        signal: controller.signal,
+      });
+
+      if (response.ok) {
+        setShowExpressBooking((await response.json()) === true);
+      }
+    }
+
+    loadExpressBookingFlag().catch((error) => {
+      if (error instanceof Error && error.name === "AbortError") return;
+      setShowExpressBooking(false);
+    });
+
+    return () => controller.abort();
+  }, []);
 
   if (ctxPassengers !== passengers) setPassengers(passengers);
 
@@ -67,6 +90,7 @@ const FlightPage = () => {
       fromAirport={fromAirport}
       toAirport={toAirport}
       formatDuration={(mins) => minutesToDuration(mins)}
+      showExpressBooking={showExpressBooking}
       onComplete={({ outbound: o, inbound: i }) => {
         selectFlights(o, i || null);
         const params = new URLSearchParams(searchParams.toString());

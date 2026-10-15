@@ -10,7 +10,9 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@azure/identity": "^4.13.1",
+    "@azure/app-configuration-provider": "2.6.0",
+    "@azure/identity": "4.14.0",
+    "@microsoft/feature-management": "2.3.1",
     "@playwright/test": "^1.61.1",
     "dotenv": "^17.4.2",
     "next": "^16.2.10",

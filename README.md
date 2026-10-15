@@ -30,6 +30,25 @@ npm run dev
 
 Browse to `http://localhost:3000` to see the app.
 
+### Express Booking feature flag
+
+Express Booking is controlled by the no-label `ExpressBooking` Enhanced Feature
+Flag in Azure App Configuration. Local development uses the identity signed in
+through Azure CLI; no Azure credentials are sent to the browser.
+
+```bash
+az login --tenant <tenant-id>
+
+cat <<EOF >> .env.local
+AZURE_APPCONFIG_ENDPOINT=https://<store-name>.azconfig.io
+EOF
+```
+
+The Azure CLI identity needs the **App Configuration Data Reader** role. The
+JavaScript provider loads Enhanced Feature Flags through its dedicated feature
+flag API. It also loads ordinary no-label configuration key-values by default;
+the current preview does not expose an option to disable those requests.
+
 ### Virtual Travel Assistant
 
 To use the AI-powered virtual travel assistant, you have a few options:
